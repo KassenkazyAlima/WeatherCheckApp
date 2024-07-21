@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Weather & News</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <h1>Weather Information</h1>
-    <input type="text" id="cityInput" placeholder="Enter city name">
+    <h1>Weather & News</h1>
+    <input type="text" id="cityInput" placeholder="Enter city's name">
     <button onclick="getWeather()">Get Weather</button>
     <div id="weatherData"></div>
-    <div id="newsData"></div>
-    <div id="suggestions"></div>
+    <div id="newsData" class></div>
+    <div id="spotifyData" class="hidden"></div>
     <div id="map"></div>
+    <div id="musicRecommendation"></div>
   </div>
+  <footer>
+    <span class="text-muted">Alima Kassenkazy - SE-2312</span>
+  </footer>
   <script src="app.js"></script>
 </body>
 </html>

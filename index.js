@@ -1,45 +1,80 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
-require('dotenv').config();
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 app.get('/weather', async (req, res) => {
-  const { city } = req.query;
-  console.log(`Fetching weather data for: ${city}`); // Debugging statement
+  const city = req.query.city;
+  const weatherApiKey = process.env.OPENWEATHER_API_KEY;
+  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`;
+
   try {
-    const weatherResponse = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`);
+    const weatherResponse = await axios.get(weatherUrl);
     const weatherData = weatherResponse.data;
-
-    console.log(weatherData); // Debugging statement
-
-    const newsResponse = await axios.get(`https://newsapi.org/v2/everything?q=weather&apiKey=${process.env.NEWS_API_KEY}`);
-    const newsData = newsResponse.data.articles;
-
-    console.log(newsData); // Debugging statement
-
-    let outfitSuggestion = 'Wear comfortable clothes.';
-    let musicSuggestion = 'Chill vibes playlist';
-
-    if (weatherData.main.temp < 10) {
-      outfitSuggestion = 'Wear warm clothes like a jacket and scarf.';
-      musicSuggestion = 'Cozy winter playlist';
-    } else if (weatherData.main.temp > 25) {
-      outfitSuggestion = 'Wear light clothes like shorts and a t-shirt.';
-      musicSuggestion = 'Summer hits playlist';
-    }
-
-    res.json({ weather: weatherData, news: newsData, outfitSuggestion, musicSuggestion });
+    res.json(weatherData);
   } catch (error) {
-    console.error('Error fetching data:', error); // Debugging statement
-    res.status(500).json({ error: 'Error fetching data' });
+    res.status(500).send('Error retrieving weather data');
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.get('/news', async (req, res) => {
+  const newsApiKey = process.env.NEWS_API_KEY;
+  const newsUrl = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${newsApiKey}`;
+
+  try {
+    const newsResponse = await axios.get(newsUrl);
+    const newsData = newsResponse.data;
+    res.json(newsData);
+  } catch (error) {
+    res.status(500).send('Error retrieving news data');
+  }
+});
+
+app.get('/spotify', async (req, res) => {
+  const query = req.query.q;
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+  const tokenUrl = 'https://accounts.spotify.com/api/token';
+
+  const authOptions = {
+    method: 'post',
+    url: tokenUrl,
+    headers: {
+      Authorization: 'Basic ' + Buffer.from(clientId + ':' + clientSecret).toString('base64'),
+    },
+    data: 'grant_type=client_credentials',
+    json: true
+  };
+
+  try {
+    const tokenResponse = await axios(authOptions);
+    const accessToken = tokenResponse.data.access_token;
+
+    const spotifyUrl = `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`;
+    const spotifyResponse = await axios.get(spotifyUrl, {
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
+    });
+
+    res.json(spotifyResponse.data);
+  } catch (error) {
+    res.status(500).send('Error retrieving Spotify data');
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
