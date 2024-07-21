@@ -24,14 +24,8 @@ This is an all-in-one weather and news application with music recommendations ac
 
 
 3. Create a .env Fil:
-   Add your API keys in a `.env` file in the root directory:
+   Add your API keys in a .env file in the root directory:
    
-   OPENWEATHER_API_KEY=your_openweather_api_key
-   NEWS_API_KEY=your_news_api_key
-   SPOTIFY_CLIENT_ID=your_spotify_client_id
-   SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-   SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
-   MAPBOX_API_KEY=your_mapbox_api_key
 
 
 5. Run the Application:
