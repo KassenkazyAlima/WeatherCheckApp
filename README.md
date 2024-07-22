@@ -55,13 +55,6 @@ This is an all-in-one weather and news application with music recommendations ac
 - **Backend**: Node.js, Express.js
 - **APIs**: OpenWeatherAPI, NewsAPI, Spotify API, Mapbox
 
-## Contributing
-
-Feel free to contribute to this project by opening an issue or submitting a pull request.
-
-## License
-
-This project is licensed under the MIT License.
 
 ## Acknowledgements
 
